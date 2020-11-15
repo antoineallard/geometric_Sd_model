@@ -1,6 +1,6 @@
 ## Random geometric graph generated according to the S^D model.
 
-#### Minimal working example
+### Minimal working example
 
 _Each command should be run from the root directory of the project._
 
@@ -23,3 +23,5 @@ Generate an edgelist according to the S^2 model.
 ```
 ./generate_edgelist_from_modelSD -n -d 2 -t -b 2.5 graph01_expo_S2_hidvar.dat  
 ```
+
+Execute `./generate_edgelist_from_modelSD -h` for further details about the command line options.
