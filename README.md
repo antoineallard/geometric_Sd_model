@@ -1,4 +1,4 @@
-## modelSD
+## Random geometric graph generated according to the S^D model.
 
 #### Minimal working example
 
