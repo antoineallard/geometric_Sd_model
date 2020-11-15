@@ -2,7 +2,7 @@
 
 #### Minimal working example
 
-_Each command should be run from the root directory of the project.
+_Each command should be run from the root directory of the project._
 
 Run the python 3 script to generate two sample files for the hidden variables.
 ```
