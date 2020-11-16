@@ -60,7 +60,7 @@ class modelSD_t
     // Parameter beta (clustering).
     double BETA = -1;
     // Number of dimensions.
-    double DIMENSION = 1;
+    int DIMENSION = 1;
     // Parameter mu (average degree).
     double MU = -1;
     // Radius of DIMENSION-sphere.
