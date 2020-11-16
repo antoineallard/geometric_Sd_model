@@ -41,7 +41,10 @@ int main(int argc , char *argv[])
     the_graph.load_hidden_variables();
 
     // Generates an edgelist.
-    the_graph.generate_edgelist();
+    the_graph.generate_graph();
+
+    // Saves the graph and some metadada as a graphML file.
+    the_graph.save_as_graphml();
   }
 
   // Returns successfully.

@@ -38,8 +38,10 @@
 #include <iomanip>
 #include <iostream>
 #include <random>
+#include <set>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 
@@ -86,6 +88,11 @@ class modelSD_t
     std::vector<double> kappa;
     // Positions of the vertices.
     std::vector< std::vector<double> > theta;
+    // Edgelist
+    std::set< std::pair<int, int> > edgelist;
+    // Vectors containing the expected and real degrees.
+    std::vector<double> edegree;
+    std::vector<int> rdegree;
   // Public functions to generate the graphs.
   public:
     // Constructor.
@@ -93,11 +100,15 @@ class modelSD_t
     // Loads the values of the hidden variables (i.e., kappa and angular positions).
     void load_hidden_variables();
     // Generates an edgelist and writes it into a file.
-    void generate_edgelist(int width = 15);
+    void generate_graph();
     // Random angular positions (if not provided).
     void generate_random_angular_positions();
     // Initializes the random number generator to the seed using SEED.
     void initialize_random_number_generator();
+    // Saves the graph and (some metadada in another file) in an edgelist file.
+    void save_as_edgelist(int width = 15);
+    // Saves the graph and some metadada in a graphML file.
+    void save_as_graphml();
     // Sets MU to its default value (obtained in the limit N -> infinity).
     void set_mu_to_default_value();
   // Private functions linked to the generation of a random edgelist.
@@ -157,13 +168,12 @@ void modelSD_t::compute_radius()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::generate_edgelist(int width)
+void modelSD_t::generate_graph()
 {
-  // Sets the name of the file to write the edgelist into.
-  std::string edgelist_filename = OUTPUT_ROOTNAME + "_edgelist.dat";
-  // Vectors containing the expected and real degrees.
-  std::vector<double> edegree;
-  std::vector<int> rdegree;
+  // Initializes the containers.
+  edgelist.clear();
+  edegree.clear();
+  rdegree.clear();
   // Initializes the containers for the expected and real degrees.
   if(OUTPUT_VERTICES_PROPERTIES)
   {
@@ -181,29 +191,6 @@ void modelSD_t::generate_edgelist(int width)
   {
     set_mu_to_default_value();
   }
-  // Opens the stream and terminates if the operation did not succeed.
-  std::fstream edgelist_file(edgelist_filename.c_str(), std::fstream::out);
-  if( !edgelist_file.is_open() )
-  {
-    std::cerr << "ERROR: Could not open file: " << edgelist_filename << "." << std::endl;
-    std::terminate();
-  }
-  // Writes the header.
-  edgelist_file << "# =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=" << std::endl;
-  edgelist_file << "# Generated on:           " << get_time()                << std::endl;
-  edgelist_file << "# Hidden variables file:  " << HIDDEN_VARIABLES_FILENAME << std::endl;
-  edgelist_file << "# Seed:                   " << SEED                      << std::endl;
-  edgelist_file << "#"                                                       << std::endl;
-  edgelist_file << "# Parameters"                                            << std::endl;
-  edgelist_file << "#   - nb. vertices:       " << nb_vertices               << std::endl;
-  edgelist_file << "#   - beta:               " << BETA                      << std::endl;
-  edgelist_file << "#   - mu:                 " << MU                        << std::endl;
-  edgelist_file << "#   - radius:             " << RADIUS                    << std::endl;
-  edgelist_file << "# =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=" << std::endl;
-  edgelist_file << "#";
-  edgelist_file << std::setw(width - 1) << "Vertex1" << " ";
-  edgelist_file << std::setw(width)     << "Vertex2" << " ";
-  edgelist_file << std::endl;
   // Generates the edgelist.
   double prob;
   for(int v1(0); v1<nb_vertices; ++v1)
@@ -213,9 +200,7 @@ void modelSD_t::generate_edgelist(int width)
       prob = compute_connection_probability(v1, v2);
       if(uniform_01(engine) < prob)
       {
-        edgelist_file << std::setw(width) << Num2Name[v1] << " ";
-        edgelist_file << std::setw(width) << Num2Name[v2] << " ";
-        edgelist_file << std::endl;
+        edgelist.insert(std::make_pair(v1, v2));
         if(OUTPUT_VERTICES_PROPERTIES)
         {
           rdegree[v1] += 1;
@@ -228,13 +213,6 @@ void modelSD_t::generate_edgelist(int width)
         edegree[v2] += prob;
       }
     }
-  }
-  // Closes the stream.
-  edgelist_file.close();
-  // Outputs the hidden variables, if required.
-  if(OUTPUT_VERTICES_PROPERTIES)
-  {
-    save_vertices_properties(rdegree, edegree, width);
   }
 }
 
@@ -371,6 +349,150 @@ void modelSD_t::load_hidden_variables()
   }
   // Computes the radius of the D-sphere.
   compute_radius();
+}
+
+
+// =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+// =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+void modelSD_t::save_as_edgelist(int width)
+{
+  // Sets the name of the file to write the edgelist into.
+  std::string edgelist_filename = OUTPUT_ROOTNAME + "_edgelist.dat";
+  // Opens the stream and terminates if the operation did not succeed.
+  std::fstream edgelist_file(edgelist_filename.c_str(), std::fstream::out);
+  if( !edgelist_file.is_open() )
+  {
+    std::cerr << "ERROR: Could not open file: " << edgelist_filename << "." << std::endl;
+    std::terminate();
+  }
+  // Writes the header.
+  edgelist_file << "# =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=" << std::endl;
+  edgelist_file << "# Generated on:           " << get_time()                << std::endl;
+  edgelist_file << "# Hidden variables file:  " << HIDDEN_VARIABLES_FILENAME << std::endl;
+  edgelist_file << "# Seed:                   " << SEED                      << std::endl;
+  edgelist_file << "#"                                                       << std::endl;
+  edgelist_file << "# Parameters"                                            << std::endl;
+  edgelist_file << "#   - nb. vertices:       " << nb_vertices               << std::endl;
+  edgelist_file << "#   - dimension:          " << DIMENSION                 << std::endl;
+  edgelist_file << "#   - beta:               " << BETA                      << std::endl;
+  edgelist_file << "#   - mu:                 " << MU                        << std::endl;
+  edgelist_file << "#   - radius:             " << RADIUS                    << std::endl;
+  edgelist_file << "# =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=" << std::endl;
+  edgelist_file << "#";
+  edgelist_file << std::setw(width - 1) << "Vertex1" << " ";
+  edgelist_file << std::setw(width)     << "Vertex2" << " ";
+  edgelist_file << std::endl;
+
+  for(auto edge : edgelist)
+  {
+    edgelist_file << std::setw(width) << Num2Name[edge.first] << " ";
+    edgelist_file << std::setw(width) << Num2Name[edge.second] << " ";
+    edgelist_file << std::endl;
+  }
+  // Closes the stream.
+  edgelist_file.close();
+  // Outputs the hidden variables, if required.
+  if(OUTPUT_VERTICES_PROPERTIES)
+  {
+    save_vertices_properties(rdegree, edegree, width);
+  }
+}
+
+
+// =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+// =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+void modelSD_t::save_as_graphml()
+{
+  // Sets the name of the file to write the edgelist into.
+  std::string graphml_filename = OUTPUT_ROOTNAME + ".xml";
+  // Opens the stream and terminates if the operation did not succeed.
+  std::fstream graphml_file(graphml_filename.c_str(), std::fstream::out);
+  if( !graphml_file.is_open() )
+  {
+    std::cerr << "ERROR: Could not open file: " << graphml_filename << "." << std::endl;
+    std::terminate();
+  }
+
+  // Header
+  graphml_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"                                                                                   << std::endl;
+  graphml_file << "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\""                                                                     << std::endl;
+  graphml_file << "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""                                                             << std::endl;
+  graphml_file << "         xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">" << std::endl;
+
+  // Declares the properties
+  graphml_file << std::endl;
+  graphml_file << "  <!-- property keys -->"                                                                      << std::endl;
+  graphml_file << "  <key id=\"key0\" for=\"graph\" attr.name=\"generated_on\" attr.type=\"string\" />"           << std::endl;
+  graphml_file << "  <key id=\"key1\" for=\"graph\" attr.name=\"hidden_variables_file\" attr.type=\"string\" />"  << std::endl;
+  graphml_file << "  <key id=\"key2\" for=\"graph\" attr.name=\"seed\" attr.type=\"int\" />"                      << std::endl;
+  graphml_file << "  <key id=\"key3\" for=\"graph\" attr.name=\"dimension\" attr.type=\"int\" />"                 << std::endl;
+  graphml_file << "  <key id=\"key4\" for=\"graph\" attr.name=\"beta\" attr.type=\"double\" />"                   << std::endl;
+  graphml_file << "  <key id=\"key5\" for=\"graph\" attr.name=\"mu\" attr.type=\"double\" />"                     << std::endl;
+  graphml_file << "  <key id=\"key6\" for=\"graph\" attr.name=\"radius\" attr.type=\"double\" />"                 << std::endl;
+  graphml_file << "  <key id=\"key7\" for=\"node\" attr.name=\"name\" attr.type=\"string\" />"                    << std::endl;
+  graphml_file << "  <key id=\"key8\" for=\"node\" attr.name=\"kappa\" attr.type=\"double\" />"                   << std::endl;
+  int k(9);
+  for(int d(0); d<DIMENSION; ++d)
+  {
+    graphml_file << "  <key id=\"key" << k++ << "\" for=\"node\" attr.name=\"angle" << d << "\" attr.type=\"double\" />"  << std::endl;
+  }
+  if(OUTPUT_VERTICES_PROPERTIES)
+  {
+    graphml_file << "  <key id=\"key" << k++ << "\" for=\"node\" attr.name=\"expected_degree\" attr.type=\"double\" />"        << std::endl;
+  }
+
+  // Declares the graph.
+  graphml_file << std::endl;
+  graphml_file << "  <graph id=\"G\" edgedefault=\"undirected\" parse.nodeids=\"canonical\" parse.edgeids=\"canonical\" parse.order=\"nodesfirst\">" << std::endl;
+
+  // Sets the graph properties.
+  graphml_file << std::endl;
+  graphml_file << "    <!-- graph properties -->" << std::endl;
+  graphml_file << "    <data key=\"key0\">" << get_time()                << "</data>" << std::endl;
+  graphml_file << "    <data key=\"key1\">" << HIDDEN_VARIABLES_FILENAME << "</data>" << std::endl;
+  graphml_file << "    <data key=\"key2\">" << SEED                      << "</data>" << std::endl;
+  graphml_file << "    <data key=\"key3\">" << DIMENSION                 << "</data>" << std::endl;
+  graphml_file << "    <data key=\"key4\">" << BETA                      << "</data>" << std::endl;
+  graphml_file << "    <data key=\"key5\">" << MU                        << "</data>" << std::endl;
+  graphml_file << "    <data key=\"key6\">" << RADIUS                    << "</data>" << std::endl;
+
+  // Declare the vertices
+  graphml_file << std::endl;
+  graphml_file << "    <!-- edges -->" << std::endl;
+  for(int k, v(0); v<nb_vertices; ++v)
+  {
+    graphml_file << "    <node id=\"n" << v <<"\">" << std::endl;
+    graphml_file << "      <data key=\"key7\">" << Num2Name[v] << "</data>"   << std::endl;
+    graphml_file << "      <data key=\"key8\">" << kappa[v] << "</data>"   << std::endl;
+    k = 9;
+    for(int d(0); d<DIMENSION; ++d)
+    {
+      graphml_file << "      <data key=\"key" << k++ << "\">" << theta[v][d] << "</data>" << std::endl;
+
+    }
+    if(OUTPUT_VERTICES_PROPERTIES)
+    {
+      graphml_file << "      <data key=\"key" << k++ << "\">" << edegree[v] << "</data>" << std::endl;
+    }
+    graphml_file << "    </node>" << std::endl;
+  }
+
+  // Declare the edges
+  int e = 0;
+  graphml_file << std::endl;
+  graphml_file << "    <!-- edges -->" << std::endl;
+  for(auto edge : edgelist)
+  {
+    graphml_file << "    <edge id=\"e" << e <<"\" source=\"n" << edge.first <<"\" target=\"n" << edge.second << "\"/>" << std::endl;
+    ++e;
+  }
+
+  // Footer.
+  graphml_file << "  </graph>" << std::endl;
+  graphml_file << "</graphml>" << std::endl;
+
+  // Closes the stream.
+  graphml_file.close();
 }
 
 
