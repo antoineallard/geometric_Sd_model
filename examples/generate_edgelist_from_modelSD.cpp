@@ -45,6 +45,9 @@ int main(int argc , char *argv[])
 
     // Saves the graph and some metadada as a graphML file.
     the_graph.save_as_graphml();
+
+    // Saves the graph and some metadada as an edgelist file.
+    the_graph.save_as_edgelist();
   }
 
   // Returns successfully.
