@@ -14,12 +14,12 @@ Compile the C++ command line program.
 g++ -O3 -std=c++11 examples/generate_edgelist_from_modelSD.cpp -o generate_edgelist_from_modelSD
 ```
 
-Generate an edgelist according to the S^1 model.
+Generate a graph according to the S^1 model.
 ```
 ./generate_edgelist_from_modelSD -n -t -b 2.5 graph01_expo_S1_hidvar.dat  
 ```
 
-Generate an edgelist according to the S^2 model.
+Generate a graph according to the S^2 model.
 ```
 ./generate_edgelist_from_modelSD -n -d 2 -t -b 2.5 graph01_expo_S2_hidvar.dat  
 ```
