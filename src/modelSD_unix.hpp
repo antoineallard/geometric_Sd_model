@@ -87,7 +87,7 @@ void print_help()
 //   a flag indicating that help dialogues have been shown on screen and further computation is not
 //   required.
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-bool parse_options(int argc , char *argv[], modelSD_t &the_graph)
+bool parse_options(int argc , char *argv[], pgl::modelSD_t &the_graph)
 {
   // Shows the options if no argument is given.
   if(argc == 1)

@@ -46,82 +46,85 @@
 
 
 
-class modelSD_t
+namespace pgl
 {
-  // Flags controlling options.
-  public:
-    bool CUSTOM_OUTPUT_ROOTNAME_MODE = false;
-    bool NAME_PROVIDED = false;
-    // bool NATIVE_INPUT_FILE = false;
-    bool THETA_PROVIDED = false;
-    bool OUTPUT_VERTICES_PROPERTIES = false;
-  // Global parameters.
-  public:
-    // Random number generator seed.
-    int SEED = std::time(NULL);
-    // Parameter beta (clustering).
-    double BETA = -1;
-    // Number of dimensions.
-    int DIMENSION = 1;
-    // Parameter mu (average degree).
-    double MU = -1;
-    // Radius of DIMENSION-sphere.
-    double RADIUS = 0;
-    // Rootname for the output files;
-    std::string OUTPUT_ROOTNAME = "default_output_rootname";
-    // Input hidden variables filename.
-    std::string HIDDEN_VARIABLES_FILENAME;
-  // General internal objects.
-  private:
-    // pi
-    const double PI = 3.141592653589793238462643383279502884197;
-    // Random number generator
-    std::mt19937 engine;
-    std::uniform_real_distribution<double> uniform_01;
-    // Mapping the numerical ID of vertices to their name.
-    std::vector<std::string> Num2Name;
-  // Objects related to the graph ensemble.
-  private:
-    // Number of vertices.
-    int nb_vertices = 0;
-    // Hidden variables of the vertices.
-    std::vector<double> kappa;
-    // Positions of the vertices.
-    std::vector< std::vector<double> > theta;
-    // Edgelist
-    std::set< std::pair<int, int> > edgelist;
-    // Vectors containing the expected and real degrees.
-    std::vector<double> edegree;
-    std::vector<int> rdegree;
-  // Public functions to generate the graphs.
-  public:
-    // Constructor.
-    modelSD_t() { initialize_random_number_generator(); };
-    // Loads the values of the hidden variables (i.e., kappa and angular positions).
-    void load_hidden_variables();
-    // Generates an edgelist and writes it into a file.
-    void generate_graph();
-    // Random angular positions (if not provided).
-    void generate_random_angular_positions();
-    // Initializes the random number generator to the seed using SEED.
-    void initialize_random_number_generator();
-    // Saves the graph and (some metadada in another file) in an edgelist file.
-    void save_as_edgelist(int width = 15);
-    // Saves the graph and some metadada in a graphML file.
-    void save_as_graphml();
-    // Sets MU to its default value (obtained in the limit N -> infinity).
-    void set_mu_to_default_value();
-  // Private functions linked to the generation of a random edgelist.
-  private:
-    // Computes the radius of the hypersphere.
-    void compute_radius();
-    // Connection probability.
-    double compute_connection_probability(int v1, int v2);
-    // Saves the values of the hidden variables (i.e., kappa and theta).
-    void save_vertices_properties(std::vector<int>& rdegree, std::vector<double>& edegree, int width);
-    // Gets and format current date/time.
-    std::string get_time();
-};
+  class modelSD_t
+  {
+    // Flags controlling options.
+    public:
+      bool CUSTOM_OUTPUT_ROOTNAME_MODE = false;
+      bool NAME_PROVIDED = false;
+      // bool NATIVE_INPUT_FILE = false;
+      bool THETA_PROVIDED = false;
+      bool OUTPUT_VERTICES_PROPERTIES = false;
+    // Global parameters.
+    public:
+      // Random number generator seed.
+      int SEED = std::time(NULL);
+      // Parameter beta (clustering).
+      double BETA = -1;
+      // Number of dimensions.
+      int DIMENSION = 1;
+      // Parameter mu (average degree).
+      double MU = -1;
+      // Radius of DIMENSION-sphere.
+      double RADIUS = 0;
+      // Rootname for the output files;
+      std::string OUTPUT_ROOTNAME = "default_output_rootname";
+      // Input hidden variables filename.
+      std::string HIDDEN_VARIABLES_FILENAME;
+    // General internal objects.
+    private:
+      // pi
+      const double PI = 3.141592653589793238462643383279502884197;
+      // Random number generator
+      std::mt19937 engine;
+      std::uniform_real_distribution<double> uniform_01;
+      // Mapping the numerical ID of vertices to their name.
+      std::vector<std::string> Num2Name;
+    // Objects related to the graph ensemble.
+    private:
+      // Number of vertices.
+      int nb_vertices = 0;
+      // Hidden variables of the vertices.
+      std::vector<double> kappa;
+      // Positions of the vertices.
+      std::vector< std::vector<double> > theta;
+      // Edgelist
+      std::set< std::pair<int, int> > edgelist;
+      // Vectors containing the expected and real degrees.
+      std::vector<double> edegree;
+      std::vector<int> rdegree;
+    // Public functions to generate the graphs.
+    public:
+      // Constructor.
+      modelSD_t() { initialize_random_number_generator(); };
+      // Loads the values of the hidden variables (i.e., kappa and angular positions).
+      void load_hidden_variables();
+      // Generates an edgelist and writes it into a file.
+      void generate_graph();
+      // Random angular positions (if not provided).
+      void generate_random_angular_positions();
+      // Initializes the random number generator to the seed using SEED.
+      void initialize_random_number_generator();
+      // Saves the graph and (some metadada in another file) in an edgelist file.
+      void save_as_edgelist(int width = 15);
+      // Saves the graph and some metadada in a graphML file.
+      void save_as_graphml();
+      // Sets MU to its default value (obtained in the limit N -> infinity).
+      void set_mu_to_default_value();
+    // Private functions linked to the generation of a random edgelist.
+    private:
+      // Computes the radius of the hypersphere.
+      void compute_radius();
+      // Connection probability.
+      double compute_connection_probability(int v1, int v2);
+      // Saves the values of the hidden variables (i.e., kappa and theta).
+      void save_vertices_properties(std::vector<int>& rdegree, std::vector<double>& edegree, int width);
+      // Gets and format current date/time.
+      std::string get_time();
+  };
+}
 
 
 
@@ -129,7 +132,7 @@ class modelSD_t
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-double modelSD_t::compute_connection_probability(int v1, int v2)
+double pgl::modelSD_t::compute_connection_probability(int v1, int v2)
 {
   double angular_distance = 0;
   if(DIMENSION == 1)
@@ -157,7 +160,7 @@ double modelSD_t::compute_connection_probability(int v1, int v2)
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::compute_radius()
+void pgl::modelSD_t::compute_radius()
 {
   double D = DIMENSION;
   RADIUS = nb_vertices * std::tgamma((D + 1) / 2);
@@ -168,7 +171,7 @@ void modelSD_t::compute_radius()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::generate_graph()
+void pgl::modelSD_t::generate_graph()
 {
   // Initializes the containers.
   edgelist.clear();
@@ -219,7 +222,7 @@ void modelSD_t::generate_graph()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::generate_random_angular_positions()
+void pgl::modelSD_t::generate_random_angular_positions()
 {
   theta.clear();
   theta.resize(nb_vertices, std::vector<double>(DIMENSION));
@@ -245,7 +248,7 @@ void modelSD_t::generate_random_angular_positions()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-std::string modelSD_t::get_time()
+std::string pgl::modelSD_t::get_time()
 {
   // Gets the current date/time.
   time_t theTime = time(NULL);
@@ -273,7 +276,7 @@ std::string modelSD_t::get_time()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::initialize_random_number_generator()
+void pgl::modelSD_t::initialize_random_number_generator()
 {
   // Initializes the random number generator.
   engine.seed(SEED);
@@ -282,7 +285,7 @@ void modelSD_t::initialize_random_number_generator()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::load_hidden_variables()
+void pgl::modelSD_t::load_hidden_variables()
 {
   // Resets the number of vertices.
   nb_vertices = 0;
@@ -354,7 +357,7 @@ void modelSD_t::load_hidden_variables()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::save_as_edgelist(int width)
+void pgl::modelSD_t::save_as_edgelist(int width)
 {
   // Sets the name of the file to write the edgelist into.
   std::string edgelist_filename = OUTPUT_ROOTNAME + "_edgelist.dat";
@@ -401,7 +404,7 @@ void modelSD_t::save_as_edgelist(int width)
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::save_as_graphml()
+void pgl::modelSD_t::save_as_graphml()
 {
   // Sets the name of the file to write the edgelist into.
   std::string graphml_filename = OUTPUT_ROOTNAME + ".xml";
@@ -498,7 +501,7 @@ void modelSD_t::save_as_graphml()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::save_vertices_properties(std::vector<int>& rdegree, std::vector<double>& edegree, int width)
+void pgl::modelSD_t::save_vertices_properties(std::vector<int>& rdegree, std::vector<double>& edegree, int width)
 {
   // Sets the name of the file to write the hidden variables into.
   std::string vprop_filename = OUTPUT_ROOTNAME + "_vprop.dat";
@@ -540,7 +543,7 @@ void modelSD_t::save_vertices_properties(std::vector<int>& rdegree, std::vector<
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void modelSD_t::set_mu_to_default_value()
+void pgl::modelSD_t::set_mu_to_default_value()
 {
   // Makes sure the value of beta has been provided.
   if(BETA <= DIMENSION)
