@@ -132,7 +132,7 @@ namespace agl
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-double pgl::modelSD_t::compute_connection_probability(int v1, int v2)
+double agl::modelSD_t::compute_connection_probability(int v1, int v2)
 {
   double angular_distance = 0;
   if(DIMENSION == 1)
@@ -160,7 +160,7 @@ double pgl::modelSD_t::compute_connection_probability(int v1, int v2)
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::compute_radius()
+void agl::modelSD_t::compute_radius()
 {
   double D = DIMENSION;
   RADIUS = nb_vertices * std::tgamma((D + 1) / 2);
@@ -171,7 +171,7 @@ void pgl::modelSD_t::compute_radius()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::generate_graph()
+void agl::modelSD_t::generate_graph()
 {
   // Initializes the containers.
   edgelist.clear();
@@ -222,7 +222,7 @@ void pgl::modelSD_t::generate_graph()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::generate_random_angular_positions()
+void agl::modelSD_t::generate_random_angular_positions()
 {
   theta.clear();
   theta.resize(nb_vertices, std::vector<double>(DIMENSION));
@@ -248,7 +248,7 @@ void pgl::modelSD_t::generate_random_angular_positions()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-std::string pgl::modelSD_t::get_time()
+std::string agl::modelSD_t::get_time()
 {
   // Gets the current date/time.
   time_t theTime = time(NULL);
@@ -276,7 +276,7 @@ std::string pgl::modelSD_t::get_time()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::initialize_random_number_generator()
+void agl::modelSD_t::initialize_random_number_generator()
 {
   // Initializes the random number generator.
   engine.seed(SEED);
@@ -285,7 +285,7 @@ void pgl::modelSD_t::initialize_random_number_generator()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::load_hidden_variables()
+void agl::modelSD_t::load_hidden_variables()
 {
   // Resets the number of vertices.
   nb_vertices = 0;
@@ -357,7 +357,7 @@ void pgl::modelSD_t::load_hidden_variables()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::save_as_edgelist(int width)
+void agl::modelSD_t::save_as_edgelist(int width)
 {
   // Sets the name of the file to write the edgelist into.
   std::string edgelist_filename = OUTPUT_ROOTNAME + "_edgelist.dat";
@@ -404,7 +404,7 @@ void pgl::modelSD_t::save_as_edgelist(int width)
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::save_as_graphml()
+void agl::modelSD_t::save_as_graphml()
 {
   // Sets the name of the file to write the edgelist into.
   std::string graphml_filename = OUTPUT_ROOTNAME + ".xml";
@@ -501,7 +501,7 @@ void pgl::modelSD_t::save_as_graphml()
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::save_vertices_properties(std::vector<int>& rdegree, std::vector<double>& edegree, int width)
+void agl::modelSD_t::save_vertices_properties(std::vector<int>& rdegree, std::vector<double>& edegree, int width)
 {
   // Sets the name of the file to write the hidden variables into.
   std::string vprop_filename = OUTPUT_ROOTNAME + "_vprop.dat";
@@ -543,7 +543,7 @@ void pgl::modelSD_t::save_vertices_properties(std::vector<int>& rdegree, std::ve
 
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
 // =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
-void pgl::modelSD_t::set_mu_to_default_value()
+void agl::modelSD_t::set_mu_to_default_value()
 {
   // Makes sure the value of beta has been provided.
   if(BETA <= DIMENSION)
