@@ -32,7 +32,7 @@
 int main(int argc , char *argv[])
 {
   // Initialize graph object.
-  pgl::modelSD_t the_graph;
+  agl::modelSD_t the_graph;
 
   // Parses the options and continues if everything is in order.
   if(parse_options(argc, argv, the_graph))

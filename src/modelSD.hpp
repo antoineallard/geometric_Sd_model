@@ -46,7 +46,7 @@
 
 
 
-namespace pgl
+namespace agl
 {
   class modelSD_t
   {
